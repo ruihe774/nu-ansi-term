@@ -115,6 +115,11 @@ where
     pub fn style_ref_mut(&mut self) -> &mut Style {
         &mut self.style
     }
+
+    // Directly access the underlying string
+    pub fn as_str(&self) -> &S {
+        self.string.as_ref()
+    }
 }
 
 /// A set of `AnsiGenericStrings`s collected together, in order to be
