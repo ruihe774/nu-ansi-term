@@ -1,5 +1,4 @@
 use std::fmt;
-use std::io;
 
 pub trait AnyWrite {
     type Wstr: ?Sized;
@@ -10,7 +9,7 @@ pub trait AnyWrite {
     fn write_str(&mut self, s: &Self::Wstr) -> Result<(), Self::Error>;
 }
 
-impl<'a> AnyWrite for dyn fmt::Write + 'a {
+impl<W: fmt::Write> AnyWrite for W {
     type Wstr = str;
     type Error = fmt::Error;
 
@@ -20,18 +19,5 @@ impl<'a> AnyWrite for dyn fmt::Write + 'a {
 
     fn write_str(&mut self, s: &Self::Wstr) -> Result<(), Self::Error> {
         fmt::Write::write_str(self, s)
-    }
-}
-
-impl<'a> AnyWrite for dyn io::Write + 'a {
-    type Wstr = [u8];
-    type Error = io::Error;
-
-    fn write_fmt(&mut self, fmt: fmt::Arguments) -> Result<(), Self::Error> {
-        io::Write::write_fmt(self, fmt)
-    }
-
-    fn write_str(&mut self, s: &Self::Wstr) -> Result<(), Self::Error> {
-        io::Write::write_all(self, s)
     }
 }

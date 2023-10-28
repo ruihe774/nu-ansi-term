@@ -4,7 +4,6 @@ use crate::style::{Color, Style};
 use crate::write::AnyWrite;
 use std::borrow::Cow;
 use std::fmt;
-use std::io;
 
 #[derive(Eq, PartialEq, Debug)]
 enum OSControl<'a, S: 'a + ToOwned + ?Sized>
@@ -277,17 +276,7 @@ impl Color {
 
 impl<'a> fmt::Display for AnsiString<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let w: &mut dyn fmt::Write = f;
-        self.write_to_any(w)
-    }
-}
-
-impl<'a> AnsiByteString<'a> {
-    /// Write an `AnsiByteString` to an `io::Write`.  This writes the escape
-    /// sequences for the associated `Style` around the bytes.
-    pub fn write_to<W: io::Write>(&self, w: &mut W) -> io::Result<()> {
-        let w: &mut dyn io::Write = w;
-        self.write_to_any(w)
+        self.write_to_any(f)
     }
 }
 
@@ -326,18 +315,7 @@ where
 
 impl<'a> fmt::Display for AnsiStrings<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let f: &mut dyn fmt::Write = f;
         self.write_to_any(f)
-    }
-}
-
-impl<'a> AnsiByteStrings<'a> {
-    /// Write `AnsiByteStrings` to an `io::Write`.  This writes the minimal
-    /// escape sequences for the associated `Style`s around each set of
-    /// bytes.
-    pub fn write_to<W: io::Write>(&self, w: &mut W) -> io::Result<()> {
-        let w: &mut dyn io::Write = w;
-        self.write_to_any(w)
     }
 }
 
